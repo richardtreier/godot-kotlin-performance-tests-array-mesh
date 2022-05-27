@@ -15,6 +15,9 @@ var fill_arrays_elapsed_ms: int = 0
 var fill_arrays_elapsed_us: int = 0
 var fill_arrays_start_us: int = 0
 
+var verts = PoolVector3Array()
+var uvs = PoolVector2Array()
+
 func _on_TestScene_run_mesh_tester_godot(p_num_blocks):
   num_blocks = p_num_blocks
   run_tests()
@@ -23,18 +26,19 @@ func _on_TestScene_run_mesh_tester_godot(p_num_blocks):
 func run_tests():
   # Start time measurment
   total_start_us = OS.get_ticks_usec()
+  fill_arrays_elapsed_us = 0
 
   # Add Mesh
   var arrays = []
   arrays.resize(Mesh.ARRAY_MAX)
 
-  var verts = PoolVector3Array()
-  var uvs = PoolVector2Array()
+  verts = PoolVector3Array()
+  uvs = PoolVector2Array()
   
   for x in range(num_blocks / 100):
     for y in range(10):
       for z in range(10):
-        add_block(verts, uvs, Vector3(x, y, z), Vector3(1, 1, 1))
+        add_block(Vector3(x, y, z), Vector3(1, 1, 1))
 
   arrays[Mesh.ARRAY_VERTEX] = verts
   arrays[Mesh.ARRAY_TEX_UV] = uvs
@@ -53,8 +57,6 @@ func run_tests():
   mesh = newMesh
 
 func add_block(
-  verts: PoolVector3Array, 
-  uvs: PoolVector2Array, 
   offset: Vector3, 
   dimensions: Vector3
 ):
@@ -78,8 +80,6 @@ func add_block(
   var rightBackwardUp = Vector3(xRight, yBackward, zUp)
 
   add_quad_face(
-    verts, 
-    uvs,
     leftForwardDown,
     leftForwardUp,
     leftBackwardUp,
@@ -87,8 +87,6 @@ func add_block(
     Vector2(dimensions.z, dimensions.y)
   )
   add_quad_face(
-    verts, 
-    uvs,
     rightBackwardDown,
     rightBackwardUp,
     rightForwardUp,
@@ -96,8 +94,6 @@ func add_block(
     Vector2(dimensions.z, dimensions.y)
   )
   add_quad_face(
-    verts, 
-    uvs,
     leftBackwardDown,
     leftBackwardUp,
     rightBackwardUp,
@@ -105,8 +101,6 @@ func add_block(
     Vector2(dimensions.z, dimensions.x)
   )
   add_quad_face(
-    verts, 
-    uvs,
     rightForwardDown,
     rightForwardUp,
     leftForwardUp,
@@ -114,8 +108,6 @@ func add_block(
     Vector2(dimensions.z, dimensions.x)
   )
   add_quad_face(
-    verts, 
-    uvs,
     leftBackwardUp,
     leftForwardUp,
     rightForwardUp,
@@ -123,8 +115,6 @@ func add_block(
     Vector2(dimensions.y, dimensions.x)
   )
   add_quad_face(
-    verts, 
-    uvs,
     leftForwardDown,
     leftBackwardDown,
     rightBackwardDown,
@@ -133,19 +123,16 @@ func add_block(
   )
    
 func add_quad_face(
-  verts: PoolVector3Array, 
-  uvs: PoolVector2Array, 
   a: Vector3, 
   b: Vector3, 
   c: Vector3, 
   d: Vector3, 
   uvDimensions: Vector2
 ):
-  add_tri_face(verts, uvs, a, b, c, Vector2(0.0, 0.0), Vector2(uvDimensions.x, 0.0), uvDimensions)
-  add_tri_face(verts, uvs, a, c, d, Vector2(0.0, 0.0), uvDimensions, Vector2(0.0, uvDimensions.y))
+  add_tri_face(a, b, c, Vector2(0.0, 0.0), Vector2(uvDimensions.x, 0.0), uvDimensions)
+  add_tri_face(a, c, d, Vector2(0.0, 0.0), uvDimensions, Vector2(0.0, uvDimensions.y))
 
 func add_tri_face(
-  verts: PoolVector3Array, uvs: PoolVector2Array, 
   a: Vector3, b: Vector3, c: Vector3,
   uva: Vector2, uvb: Vector2, uvc: Vector2
 ):
