@@ -29,3 +29,7 @@ inline fun <reified T : Resource> loadResourceOrThrow(fullPath: String): T {
     it
   }
 }
+
+inline fun <reified T : Number> Node.getNumber(propertyName: String, mapper: (number: Number) -> T): T {
+  return (get(propertyName) as Number).let(mapper)
+}

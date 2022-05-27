@@ -6,6 +6,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+  implementation("org.apache.commons:commons-lang3:3.12.0")
+}
+
 godot {
     isAndroidExportEnabled.set(false)
     d8ToolPath.set(File("${System.getenv("ANDROID_SDK_ROOT")}/build-tools/31.0.0/d8"))
