@@ -15,13 +15,19 @@ var fill_arrays_elapsed_ms: int = 0
 var fill_arrays_elapsed_us: int = 0
 var fill_arrays_start_us: int = 0
 
+var resizeArrays = false
+
 var verts = PoolVector3Array()
 var uvs = PoolVector2Array()
 
-func _on_TestScene_run_mesh_tester_godot(p_num_blocks):
+var iVert = 0
+var iUv = 0
+
+func _on_TestScene_run_mesh_tester_godot(p_num_blocks, p_resize_arrays):
+  resizeArrays = p_resize_arrays
   num_blocks = p_num_blocks
   run_tests()
-  emit_signal("report_mesh_tester_godot_result", total_elapsed_ms, fill_arrays_elapsed_ms)
+  emit_signal("report_mesh_tester_godot_result", total_elapsed_ms, fill_arrays_elapsed_ms, p_resize_arrays)
 
 func run_tests():
   # Start time measurment
@@ -32,8 +38,17 @@ func run_tests():
   var arrays = []
   arrays.resize(Mesh.ARRAY_MAX)
 
+  var numVerts = num_blocks * 6 * 6
+
+  iVert = 0
   verts = PoolVector3Array()
+  if resizeArrays:
+    verts.resize(numVerts)
+  
+  iUv = 0
   uvs = PoolVector2Array()
+  if resizeArrays:
+    uvs.resize(numVerts)
   
   for x in range(num_blocks / 100):
     for y in range(10):
@@ -137,11 +152,24 @@ func add_tri_face(
   uva: Vector2, uvb: Vector2, uvc: Vector2
 ):
   fill_arrays_start_us = OS.get_ticks_usec()
-  verts.append(a)
-  verts.append(b)
-  verts.append(c)
-  uvs.append(uva)
-  uvs.append(uvb)
-  uvs.append(uvc)
+  if resizeArrays:
+    verts[iVert] = a
+    iVert += 1
+    verts[iVert] = b
+    iVert += 1
+    verts[iVert] = c
+    iVert += 1
+    uvs[iUv] = uva
+    iUv += 1
+    uvs[iUv] = uvb
+    iUv += 1
+    uvs[iUv] = uvc
+    iUv += 1
+  else:
+    verts.append(a)
+    verts.append(b)
+    verts.append(c)
+    uvs.append(uva)
+    uvs.append(uvb)
+    uvs.append(uvc)
   fill_arrays_elapsed_us += OS.get_ticks_usec() - fill_arrays_start_us
-

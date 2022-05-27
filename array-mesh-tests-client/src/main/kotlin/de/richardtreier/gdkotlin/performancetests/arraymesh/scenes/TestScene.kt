@@ -29,10 +29,11 @@ class TestScene : Spatial() {
   private lateinit var nodes: Nodes
   private var numBlocks = 0
   private var lastKotlinResult: TestResult? = null
-  private var lastGodotResult: TestResult? = null
+  private var lastGodotNoResizeArraysResult: TestResult? = null
+  private var lastGodotResizeArraysResult: TestResult? = null
 
   @RegisterSignal
-  val signalRunMeshTesterGodot by signal<Int>("numBlocks")
+  val signalRunMeshTesterGodot by signal<Int, Boolean>("numBlocks", "resizeArrays")
 
   @RegisterFunction
   override fun _ready() {
@@ -46,15 +47,31 @@ class TestScene : Spatial() {
     nodes.button.disableWhile {
       updateNumBlocks()
       lastKotlinResult = runKotlinTest()
-      signalRunMeshTesterGodot.emit(numBlocks)
+      signalRunMeshTesterGodot.emit(numBlocks, false)
     }
   }
 
   @RegisterFunction
-  fun onReportMeshTesterGodotResult(numTotalMs: Int, numInsertsMs: Int) {
-    lastGodotResult = TestResult("Godot", numTotalMs, numInsertsMs)
-    val resultMessage = listOf(lastKotlinResult, lastGodotResult).joinToString("\n") { it?.pretty() ?: "null" }
-    nodes.result.text = resultMessage
+  fun onReportMeshTesterGodotResult(numTotalMs: Int, numInsertsMs: Int, resizeArrays: Boolean) {
+    val result = TestResult(
+      "GDScript ${if (resizeArrays) "with resize and set" else "with append"}",
+      numTotalMs,
+      numInsertsMs
+    )
+    if (!resizeArrays) {
+      lastGodotNoResizeArraysResult = result
+      signalRunMeshTesterGodot.emit(numBlocks, true)
+    } else {
+      lastGodotResizeArraysResult = result
+
+      val resultMessage = "---\nGenerating $numBlocks cubes into a single ArrayMesh:" + listOfNotNull(
+        lastKotlinResult,
+        lastGodotNoResizeArraysResult,
+        lastGodotResizeArraysResult
+      ).joinToString("") { "\n  - " + it.pretty() }
+      println(resultMessage)
+      nodes.result.text = resultMessage
+    }
   }
 
   private fun runKotlinTest(): TestResult {
