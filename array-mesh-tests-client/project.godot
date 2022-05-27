@@ -10,13 +10,16 @@ config_version=4
 
 _global_script_classes=[  ]
 _global_script_class_icons={
-
 }
 
 [application]
 
 config/name="gdkotlin-performance-tests-array-mesh"
 config/icon="res://icon.png"
+
+[kotlin_jvm]
+
+editor/gradle_wrapper_dir="res://.."
 
 [rendering]
 

@@ -4,9 +4,8 @@
 # Ignore Gradle build output directory
 build
 
-# Ignore Intellij files
+# Ignore Intellij directory
 .idea
-*.iml
 
 # Ignore embedded jre
 jre
@@ -23,5 +22,4 @@ export_presets.cfg
 .mono/
 data_*/
 
-# Godot-Kotlin Specific
 *.log

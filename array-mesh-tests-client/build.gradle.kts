@@ -11,3 +11,9 @@ godot {
     d8ToolPath.set(File("${System.getenv("ANDROID_SDK_ROOT")}/build-tools/31.0.0/d8"))
     androidCompileSdkDir.set(File("${System.getenv("ANDROID_SDK_ROOT")}/platforms/android-30"))
 }
+
+tasks.build {
+  doLast {
+    projectDir.resolve("build").resolve(".gdignore").createNewFile()
+  }
+}

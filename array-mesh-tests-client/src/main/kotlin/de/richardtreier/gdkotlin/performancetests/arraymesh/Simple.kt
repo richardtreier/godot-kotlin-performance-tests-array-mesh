@@ -1,4 +1,4 @@
-package de.richardtreier.gdkotlin.performancetests.array-mesh
+package de.richardtreier.gdkotlin.performancetests.arraymesh
 
 import godot.Spatial
 import godot.annotation.RegisterClass
